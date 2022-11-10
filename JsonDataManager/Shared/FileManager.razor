@@ -1,7 +1,16 @@
 ﻿@using JsonDataManager.Data
 @inject WageService wageService
 <div class="container">
-    <h3>@String.Format("Time to load: {0} ms", elapsedMiliseconds)</h3>
+    <div class="row">
+        <div class="col">
+            <h3>@String.Format("Time to load: {0} ms", elapsedMiliseconds)</h3>
+
+        </div>
+        <div class="col">
+            <button class="btn btn-primary" disabled="@(!isLoaded)" @onclick="UpdateWages">Update Wages</button>
+            <button class="btn btn-primary" disabled="@(!isLoaded)" @onclick="@(() => GenerateAndGetWages(100000))">Generate Wages</button>
+        </div>
+    </div>
     @if(isLoaded == false){
         <div class="spinner-border text-primary" role="status">
             <span class="sr-only"></span>
@@ -38,14 +47,15 @@
 
     public void StartTimer()
     {
-        timer = new System.Timers.Timer(10);
+        elapsedMiliseconds = 0;
+        timer = new System.Timers.Timer(1);
         timer.Elapsed += CountDownTimer;
         timer.Enabled = true;
     }
 
     public void CountDownTimer(Object source, System.Timers.ElapsedEventArgs e)
     {
-        elapsedMiliseconds += 10;
+        elapsedMiliseconds += 1;
     }
     public void StopTimer(){
         timer.Enabled = false;
@@ -53,14 +63,19 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await GenerateAndGetWages(100000);
+    }
+
+    public async Task GenerateAndGetWages(int count){
+        isLoaded = false;
         StartTimer();
-        await GenerateWages(100000);
+        await GenerateWages(count);
         StopTimer();
         await GetWages();
         isLoaded = true;
     }
 
-    public async Task<bool> GenerateWages(int count){
+    public async Task GenerateWages(int count){
         try
         {
             await wageService.GenerateWagesAsync(count);
@@ -68,11 +83,18 @@
         }
         catch (Exception)
         {
-            return false;
         }
-        return true;
     }
     public async Task GetWages(){
+        wages = await wageService.GetWagesAsync();
+        wages = wages.Take(10).ToList();
+    }
+    public async Task UpdateWages(){
+        isLoaded = false;
+        StartTimer();
+        await wageService.UpdateWagesAsync();
+        StopTimer();
+        isLoaded = true;
         wages = await wageService.GetWagesAsync();
         wages = wages.Take(10).ToList();
     }

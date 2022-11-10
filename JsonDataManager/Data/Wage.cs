@@ -3,12 +3,13 @@
     public class Wage
     {
         public double Gross { get; set; }
-        public double Net { get; set; }
+        public double Net { get { return Gross * 0.665; } }
+        public double TaxKey { get; set; }
 
-        public Wage(double gross, double net)
+        public Wage(double gross, double taxKey)
         {
             Gross = gross;
-            Net = net;
+            TaxKey = taxKey;
         }
     }
 }
