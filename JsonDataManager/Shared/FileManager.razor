@@ -1,0 +1,79 @@
+﻿@using JsonDataManager.Data
+@inject WageService wageService
+<div class="container">
+    <h3>@String.Format("Time to load: {0} ms", elapsedMiliseconds)</h3>
+    @if(isLoaded == false){
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only"></span>
+        </div>
+    }
+    @if (isLoaded)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Gross</th>
+                    <th scope="col">Net</th>
+                </tr>
+            </thead>
+            @foreach (var wage in wages)
+            {
+                <tr>
+                    <td>
+                        @String.Format("{0:f} Ft", wage.Gross)
+                    </td>
+                    <td>
+                        @String.Format("{0:f} Ft", wage.Net)
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+@code {
+    private List<Wage> wages = new List<Wage>();
+    private bool isLoaded = false;
+    private int elapsedMiliseconds = 0;
+    private static System.Timers.Timer timer;
+
+    public void StartTimer()
+    {
+        timer = new System.Timers.Timer(10);
+        timer.Elapsed += CountDownTimer;
+        timer.Enabled = true;
+    }
+
+    public void CountDownTimer(Object source, System.Timers.ElapsedEventArgs e)
+    {
+        elapsedMiliseconds += 10;
+    }
+    public void StopTimer(){
+        timer.Enabled = false;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        StartTimer();
+        await GenerateWages(100000);
+        StopTimer();
+        await GetWages();
+        isLoaded = true;
+    }
+
+    public async Task<bool> GenerateWages(int count){
+        try
+        {
+            await wageService.GenerateWagesAsync(count);
+
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        return true;
+    }
+    public async Task GetWages(){
+        wages = await wageService.GetWagesAsync();
+        wages = wages.Take(10).ToList();
+    }
+}
