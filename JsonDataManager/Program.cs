@@ -7,7 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddHttpClient<RobotService>(client =>
+{
+    client.BaseAddress = new Uri("https://randomuser.me/api/");
+});
+builder.Services.AddHttpClient<CrimeService>();
 builder.Services.AddSingleton<WageService>();
+builder.Services.AddSingleton<ApiCallerService>();
+builder.Services.AddSingleton<RobotService>();
+builder.Services.AddSingleton<CrimeService>();
 
 var app = builder.Build();
 

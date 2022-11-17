@@ -1,0 +1,111 @@
+﻿@using JsonDataManager.Data
+@using JsonDataManager.Data.Models
+@using JsonDataManager.Data.Models.Robot
+@inject CrimeService crimeService
+@inject RobotService robotService
+
+@page "/Crime"
+
+<div class="container">
+    <div class="">
+        @if (isLoaded == false)
+        {
+            <div class="container" style="margin:auto">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only"></span>
+                </div>
+
+            </div>
+        }
+        else{
+            <div class="row" style="margin: auto">
+                <div class="col-4">
+                    <div class="card" style="width: 18rem; margin: auto">
+                        <img class="card-img-top" src="@robot.PicturePath" alt="Card image cap">
+                        <div class="card-body justify-content-center">
+                            <h5 class="card-title text-center">@String.Format("{0} {1} {2}",robot.Name.Title,robot.Name.First, robot.Name.Last)</h5>
+                            <a @onclick="GetNew" class="btn btn-primary text-center">Generate new criminal</a>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Crimes commited</h5>
+                            <div class="table-responsive">
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Type</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Da hood</th>
+
+                                        </tr>
+
+                                    </thead>
+                                    @foreach (var c in crime)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @c.Type
+                                            </td>
+                                            <td>
+                                                @String.Format("{0}.{1}.{2}",c.Year,c.Month,c.Day)
+                                            </td>
+                                            <td>@c.Neighbourhood</td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                
+            
+                    
+                </div>
+            </div>
+
+            
+        }
+        
+   </div>
+</div>
+
+
+@code {
+    public List<Crime> crime;
+    public Robot robot = new Robot();
+    public bool isLoaded = false;
+    protected override async Task OnInitializedAsync()
+    {
+        await GetNew();
+
+    }
+
+    public async Task GetNew(){
+        isLoaded = false;
+        await GetRobot();
+        await GetCrime();
+        isLoaded = true;
+    }
+    public async Task GetRobot(){
+        robot = await robotService.GetRobotAsync();
+    }
+
+    public async Task GetCrime(){
+        var r = new Random();
+        crime = new List<Crime>();
+        var response = await crimeService.GetCrimesAsync();
+        for (int i = 0; i < r.Next(1,response.Count() - 4); i++)
+        {
+            crime.Add(response[r.Next(0, response.Count)]);
+        }
+        
+    }
+
+}
