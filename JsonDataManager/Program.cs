@@ -1,6 +1,11 @@
-using JsonDataManager.Data;
+using Application.BusinessLogic;
+using Application.Contracts.BusinessLogic;
+using Application.Contracts.Repositories;
+using Application.Contracts.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Repositories;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,10 +17,13 @@ builder.Services.AddHttpClient<RobotService>(client =>
     client.BaseAddress = new Uri("https://randomuser.me/api/");
 });
 builder.Services.AddHttpClient<CrimeService>();
-builder.Services.AddSingleton<WageService>();
-builder.Services.AddSingleton<ApiCallerService>();
-builder.Services.AddSingleton<RobotService>();
-builder.Services.AddSingleton<CrimeService>();
+builder.Services.AddSingleton<IWageService,WageService>();
+builder.Services.AddSingleton<IRobotService,RobotService>();
+builder.Services.AddSingleton<ICrimeService,CrimeService>();
+builder.Services.AddSingleton<IRobotRepository,RobotRepository>();
+builder.Services.AddSingleton<IRobotBusinessLogic, RobotBusinessLogic>();
+builder.Services.AddSingleton<IWageBusinessLogic, WageBusinessLogic>();
+
 
 var app = builder.Build();
 

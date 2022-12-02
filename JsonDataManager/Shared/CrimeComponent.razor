@@ -1,11 +1,10 @@
-﻿@using JsonDataManager.Data
-@using JsonDataManager.Data.Models
-@using JsonDataManager.Data.Models.Robot
-@inject CrimeService crimeService
-@inject RobotService robotService
+﻿
 
 @page "/Crime"
-
+@using Application.Contracts.BusinessLogic
+@using Data.Contracts.Models
+@using Data.Contracts.Models.Robot
+@inject IRobotBusinessLogic robotBl
 <div class="container">
     <div class="">
         @if (isLoaded == false)
@@ -94,13 +93,14 @@
         isLoaded = true;
     }
     public async Task GetRobot(){
-        robot = await robotService.GetRobotAsync();
+        robotBl.SaveRobot(new Domain.ROBOT.Robots { title="asd"});
+        robot = await robotBl.GetRobotAsync();
     }
 
     public async Task GetCrime(){
         var r = new Random();
         crime = new List<Crime>();
-        var response = await crimeService.GetCrimesAsync();
+        var response = await robotBl.GetCrimesAsync();
         for (int i = 0; i < r.Next(1,response.Count() - 4); i++)
         {
             crime.Add(response[r.Next(0, response.Count)]);

@@ -1,5 +1,7 @@
-﻿@using JsonDataManager.Data
-@inject WageService wageService
+﻿@using Application.BusinessLogic
+@using Application.Contracts.BusinessLogic
+@using Data.Contracts.Models
+@inject IWageBusinessLogic wageBl
 <div class="container">
     <div class="row">
         <div class="col">
@@ -78,7 +80,7 @@
     public async Task GenerateWages(int count){
         try
         {
-            await wageService.GenerateWagesAsync(count);
+            await wageBl.GenerateWagesAsync(count);
 
         }
         catch (Exception)
@@ -86,16 +88,16 @@
         }
     }
     public async Task GetWages(){
-        wages = await wageService.GetWagesAsync();
+        wages = await wageBl.GetWagesAsync();
         wages = wages.Take(10).ToList();
     }
     public async Task UpdateWages(){
         isLoaded = false;
         StartTimer();
-        await wageService.UpdateWagesAsync();
+        await wageBl.UpdateWagesAsync();
         StopTimer();
         isLoaded = true;
-        wages = await wageService.GetWagesAsync();
+        wages = await wageBl.GetWagesAsync();
         wages = wages.Take(10).ToList();
     }
 }
