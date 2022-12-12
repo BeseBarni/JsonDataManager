@@ -6,6 +6,7 @@
 @using Data.Contracts.Models.Robot
 @inject IRobotBusinessLogic robotBl
 <div class="container">
+    <h3>Number of Robots in Database: @GetRobotCount()</h3>
     <div class="">
         @if (isLoaded == false)
         {
@@ -86,15 +87,21 @@
 
     }
 
+    public int GetRobotCount(){
+        return robotBl.GetRobotCount();
+    }
+
     public async Task GetNew(){
         isLoaded = false;
         await GetRobot();
         await GetCrime();
+        
         isLoaded = true;
     }
     public async Task GetRobot(){
-        robotBl.SaveRobot(new Domain.ROBOT.Robots { title="asd"});
         robot = await robotBl.GetRobotAsync();
+        robotBl.SaveRobot(new Domain.ROBOT.Robots { title = robot.Name.Title, first = robot.Name.First,
+          last = robot.Name.Last, gender = robot.Gender});
     }
 
     public async Task GetCrime(){

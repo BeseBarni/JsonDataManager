@@ -32,6 +32,11 @@ namespace Application.BusinessLogic
             return robot.GetRobotAsync();
         }
 
+        public int GetRobotCount()
+        {
+            return robotRepo.GetRobotCount();
+        }
+
         public void SaveRobot(Domain.ROBOT.Robots robot)
         {
             robotRepo.SaveRobot(robot);

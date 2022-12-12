@@ -6,5 +6,6 @@ namespace Application.Contracts.BusinessLogic
     public interface IRobotBusinessLogic : IRobotService, ICrimeService
     {
         void SaveRobot(Robots robot);
+        int GetRobotCount();    
     }
 }

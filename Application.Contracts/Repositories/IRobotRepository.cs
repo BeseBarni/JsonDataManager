@@ -10,5 +10,6 @@ namespace Application.Contracts.Repositories
     public interface IRobotRepository
     {
         void SaveRobot(Robots robot);
+        int GetRobotCount();
     }
 }

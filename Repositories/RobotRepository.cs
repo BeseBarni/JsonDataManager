@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Repositories;
+using Data.Contracts.Models.Robot;
 using Domain.ROBOT;
 
 namespace Repositories
@@ -26,5 +27,20 @@ namespace Repositories
 
         }
 
+        public int GetRobotCount()
+        {
+            using (Ctx = CreateNewContext())
+            {
+                try
+                {
+                    return Ctx.Robots.Count();
+                    
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+            }
+        }
     }
 }
